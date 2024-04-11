@@ -1,6 +1,6 @@
 import { CAMPSITES } from '../../app/shared/CAMPSITES'
 
-const selectAllCampsites = () => {
+export const selectAllCampsites = () => {
     return CAMPSITES;
 };
 
