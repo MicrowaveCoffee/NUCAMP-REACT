@@ -1,19 +1,27 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { useDispatch  } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, FormGroup, Label } from 'reactstrap'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import {validateCommentForm} from '../../utils/validateCommentForm'
+import { addComment } from './commentsSlice';
 
 const CommentForm = ({campsiteId}) => {
-    const [modalOpen, setModalOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const dispatch = useDispatch();
+
+
     const handleSubmit = (values) => {
         const comment = 
         {
             campsiteId: parseInt(campsiteId),
             rating: values.rating,
             author: values.author,
-            text: values.commentText
+            text: values.commentText,
+            date: new Date(Date.now()).toISOString()
         };
-        console.log(comment)
+        console.log('comment:', comment);
+        dispatch(addComment(comment))
         setModalOpen(false)
     }
     return (
@@ -23,18 +31,13 @@ const CommentForm = ({campsiteId}) => {
             </Button>
             <Modal isOpen={modalOpen}>
                 <ModalHeader toggle = {() => setModalOpen(false)}></ModalHeader>
-               <Formik initialValues = 
-               {{
-                rating: undefined,
-                author: '',
-                commentText: ''
-                }}
-                onSubmit = {{handleSubmit}}
+               <Formik initialValues = {{rating: undefined,author: '',commentText: ''}}
+                onSubmit={handleSubmit}
                 validate={validateCommentForm}>
                     <Form>
                         <FormGroup>
                             <ErrorMessage name = 'rating'>{(msg) => <p className='text-danger'>{msg}</p>}</ErrorMessage>
-                            <Label htmlfor='rating'>Rating</Label>
+                            <Label htmlFor='rating'>Rating</Label>
                             <Field
                                     name='rating'
                                     as='select'
@@ -50,7 +53,7 @@ const CommentForm = ({campsiteId}) => {
                         </FormGroup>
                         <FormGroup>
                             <ErrorMessage name = 'author'>{(msg) => <p className='text-danger'>{msg}</p>}</ErrorMessage>
-                            <Label htmlfor= 'author'>Your Name</Label>
+                            <Label htmlFor= 'author'>Your Name</Label>
                             <Field
                                     name='author'
                                     placeholder='Your Name'
@@ -58,7 +61,7 @@ const CommentForm = ({campsiteId}) => {
                                 />
                         </FormGroup>
                         <FormGroup>
-                            <Label htmlfor = 'commentText'>Comment</Label>
+                            <Label htmlFor = 'commentText'>Comment</Label>
                             <Field
                                     name='commentText'
                                     as='textarea'
